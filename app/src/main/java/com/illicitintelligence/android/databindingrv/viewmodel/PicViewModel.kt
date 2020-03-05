@@ -1,7 +1,6 @@
 package com.illicitintelligence.android.databindingrv.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.illicitintelligence.android.databindingrv.network.NetworkProvider
 import com.illicitintelligence.android.databindingrv.view.DogAdapter
@@ -19,16 +18,16 @@ class PicViewModel(application: Application) : AndroidViewModel(application){
         NetworkProvider
     }
 
+    fun getPicturesHelper() = myRetrofit.getPictures()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+
     fun getPictures() =
-        myDisposable.add(myRetrofit.getPictures()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+        myDisposable.add(getPicturesHelper()
             .subscribe({ response ->
                 myAdapter?.myList = response
                 myAdapter?.notifyDataSetChanged()
-                Log.d("TAG_X", "getPictures: ${response.size}")
             }, { throwable ->
-                Log.d("TAG_X", "getPictures: uhoh, error: ${throwable.message}")
             }))
 
     override fun onCleared() {
